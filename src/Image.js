@@ -13,48 +13,75 @@ export default class Image extends Component {
     };
   }
 
-  // getImage = async () => {
-  //   let promiseImages = [];
-  //    {
-  //     try {
-  //       promiseImages.push(fetch("https://dog.ceo/api/breeds/image/random"));
-  //       console.log(promiseImages);
-  //     } catch (e) {
-  //       console.log(e.message);
-  //     }
-  //   }
-  //   Promise.all(promiseImages).then(responses => {
-  //     const jsons = [];
-  //     for (let i = 0; i < responses.length; i++) {
-  //       jsons.push(responses[i].json());
-  //     }
-  //     Promise.all(jsons).then(results => {
-  //       this.setState(prev => ({
-  //         images: results.map(r => r.message)
-  //       }));
-  //     });
-  //   });
-  // };
-  componentDidMount = () => {
-    (async () => {
+  getImage = async () => {
+    let promiseImages = [];
+    for (let i = 0; i < 3; i++) {
       try {
-        const promiseImages = await Promise.all(
-          new Array(1).fill(fetch("https://dog.ceo/api/breeds/image/random"))
-        );
-        const results = await Promise.all(
-          promiseImages.map(elem => elem.json())
-        );
-        this.setState({
-          images: results.map(r => r.message)
-        });
+        promiseImages.push(fetch("https://dog.ceo/api/breeds/image/random"));
       } catch (e) {
         console.log(e.message);
       }
-    })();
+    }
+    Promise.all(promiseImages).then(responses => {
+      const jsons = [];
+      for (let i = 0; i < responses.length; i++) {
+        jsons.push(responses[i].json());
+      }
+      Promise.all(jsons).then(results => {
+        this.setState(prev => ({
+          images: results.map(r => r.message)
+        }));
+      });
+    });
+  };
+
+  // componentDidMount = () => {
+  //   (async () => {
+  //     try {
+  //       const promiseImages = await Promise.all(
+  //         new Array(3).fill(fetch("https://dog.ceo/api/breeds/image/random"))
+  //       );
+  //       console.log(promiseImages);
+
+  //       const results = await Promise.all(promiseImages).then(responses => {
+  //         responses.map(elem => elem.json());
+  //       });
+  //       this.setState({
+  //         images: results.map(r => r.message)
+  //       });
+  //     } catch (e) {
+  //       console.log(e.message);
+  //     }
+  //   })();
+  // };
+
+  // componentDidMount = () => {
+  //   (async () => {
+  //     try {
+  //       const promiseImages = await Promise.all(
+  //         new Array(1).fill(fetch("https://dog.ceo/api/breeds/image/random"))
+  //       );
+  //       const results = await Promise.all(
+  //         promiseImages.map(elem => elem.json())
+  //       );
+  //       this.setState({
+  //         images: results.map(r => r.message)
+  //       });
+  //     } catch (e) {
+  //       console.log(e.message);
+  //     }
+  //   })();
+  // };
+
+  componentDidMount = () => {
+    try {
+      this.getImage();
+    } catch (e) {
+      console.log(e.message);
+    }
   };
 
   render() {
-    console.log("render");
     return (
       <>
         {this.state.images.length ? (
@@ -63,7 +90,7 @@ export default class Image extends Component {
             style={styling}
           ></img>
         ) : (
-          <div>Loading...</div>
+          <div style={{ textAlign: "center" }}>Loading...</div>
         )}
       </>
     );
