@@ -1,47 +1,71 @@
 import React, { Component } from "react";
 
-const images = new Array(3).fill(0);
-
 const styling = {
-  width: "80%",
-  height: "500px",
-  border: "1px solid black",
+  width: "100%",
+  height: "300px",
   objectFit: "cover"
 };
 export default class Image extends Component {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     currentSrc: 0
-  //   };
-  // }
+  constructor(props) {
+    super(props);
+    this.state = {
+      images: []
+    };
+  }
 
-  getImage = async () => {
-    let images = [];
-    for (let i = 0; i < 3; i++) {
+  // getImage = async () => {
+  //   let promiseImages = [];
+  //    {
+  //     try {
+  //       promiseImages.push(fetch("https://dog.ceo/api/breeds/image/random"));
+  //       console.log(promiseImages);
+  //     } catch (e) {
+  //       console.log(e.message);
+  //     }
+  //   }
+  //   Promise.all(promiseImages).then(responses => {
+  //     const jsons = [];
+  //     for (let i = 0; i < responses.length; i++) {
+  //       jsons.push(responses[i].json());
+  //     }
+  //     Promise.all(jsons).then(results => {
+  //       this.setState(prev => ({
+  //         images: results.map(r => r.message)
+  //       }));
+  //     });
+  //   });
+  // };
+  componentDidMount = () => {
+    (async () => {
       try {
-        fetch("https://dog.ceo/api/breeds/image/random")
-          .then(response => response.json())
-          .then(json => (images[i] = json.message));
+        const promiseImages = await Promise.all(
+          new Array(1).fill(fetch("https://dog.ceo/api/breeds/image/random"))
+        );
+        const results = await Promise.all(
+          promiseImages.map(elem => elem.json())
+        );
+        this.setState({
+          images: results.map(r => r.message)
+        });
       } catch (e) {
         console.log(e.message);
       }
-    }
-    return images;
-  };
-  componentDidMount = async () => {
-    // this.timerID = setInterval(async () => {
-    let pic;
-    try {
-      // pic = await this.getImage();
-      console.log(await this.getImage());
-    } catch (e) {
-      console.log(e.message);
-    }
-    // });
+    })();
   };
 
   render() {
-    return <img src={images[this.props.currentSrc]} style={styling}></img>;
+    console.log("render");
+    return (
+      <>
+        {this.state.images.length ? (
+          <img
+            src={this.state.images[this.props.currentSrc]}
+            style={styling}
+          ></img>
+        ) : (
+          <div>Loading...</div>
+        )}
+      </>
+    );
   }
 }
