@@ -1,11 +1,15 @@
 import React from "react";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import Collapse from "@material-ui/core/Collapse";
-import Icon from "@material-ui/core/Icon";
+import {
+  List,
+  ListItem,
+  ListItemText,
+  Collapse,
+  Icon,
+  Fab
+} from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
+import AddIcon from "@material-ui/icons/Add";
 
 export default class BreedList extends React.Component {
   constructor(props) {
@@ -13,6 +17,7 @@ export default class BreedList extends React.Component {
     this.state = {
       open: false
     };
+    this.getBreedImages = this.props.getBreedImages.bind(this);
   }
 
   handleClick = () => {
@@ -24,8 +29,20 @@ export default class BreedList extends React.Component {
   render() {
     return (
       <List>
-        <ListItem button onClick={this.handleClick}>
-          <ListItemText primary={this.props.item} />
+        <ListItem
+          button
+          onClick={this.handleClick}
+          // onClick={() => this.getImages(this.props.breed, false)}
+        >
+          <Fab color="primary" aria-label="add">
+            <AddIcon
+              onClick={() => this.getBreedImages(this.props.breed, null)}
+            />
+          </Fab>
+          <ListItemText
+            primary={this.props.breed}
+            style={{ marginLeft: "10px" }}
+          />
           {this.props.exists ? (
             !this.state.open ? (
               <Icon>
@@ -40,8 +57,15 @@ export default class BreedList extends React.Component {
         </ListItem>
         <Collapse in={this.state.open} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            {this.props.subBreed.map(elem => (
-              <ListItem button>
+            {this.props.subBreed.map((elem, i) => (
+              <ListItem
+                button
+                key={i}
+                style={{ backgroundColor: "violet" }}
+                onClick={e => {
+                  this.getBreedImages(this.props.breed, elem);
+                }}
+              >
                 <ListItemText primary={elem} />
               </ListItem>
             ))}

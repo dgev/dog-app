@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "./Image";
 import BreedList from "./BreedList";
+import BreedImages from "./BreedImages";
 import { Button } from "@material-ui/core";
 
 const divStyle = {
@@ -21,6 +22,18 @@ const imageStyle = {
 const buttonStyle = {
   width: "100px"
 };
+const breedListStyle = {
+  width: "200px",
+  float: "left",
+  display: "block",
+  marginLeft: "6%"
+};
+const breedListPics = {
+  flex: 1,
+  display: "block",
+  float: "left",
+  backgroundColor: "blue"
+};
 
 export default class App extends React.Component {
   constructor(props) {
@@ -28,9 +41,26 @@ export default class App extends React.Component {
     this.state = {
       currentSrc: 0,
       length: 3,
-      breed: []
+      breed: null,
+      breedName: "",
+      subBreedName: ""
     };
   }
+
+  getBreedImages = (breed, subBreed) => {
+    console.log(breed + " " + subBreed);
+
+    if (subBreed !== null) {
+      this.setState({
+        breedName: breed,
+        subBreedName: subBreed
+      });
+    } else {
+      this.setState({
+        breedName: breed
+      });
+    }
+  };
 
   next = () => {
     this.setState(prev => ({
@@ -47,18 +77,17 @@ export default class App extends React.Component {
     }));
   };
 
-  getBreed = async () => {
-    try {
-      await fetch("https://dog.ceo/api/breeds/list/all")
-        .then(resp => resp.json())
-        .then(results =>
-          this.setState({
-            breed: results.message
-          })
-        );
-    } catch (e) {
-      console.log(e.message);
-    }
+  getBreed = () => {
+    fetch("https://dog.ceo/api/breeds/list/all")
+      .then(resp => resp.json())
+      .then(results =>
+        this.setState({
+          breed: results.message
+        })
+      )
+      .catch(e => {
+        console.log(e.message);
+      });
   };
 
   componentDidMount = () => {
@@ -67,18 +96,30 @@ export default class App extends React.Component {
     // console.log(this.state.breed);
   };
 
+  componentWillUnmount = () => {
+    clearInterval(this.interval);
+  };
+
   play = () => {
-    setInterval(this.next, 1500);
+    this.interval = setInterval(this.next, 1500);
   };
 
   render() {
-    const lists = Object.keys(this.state.breed).map(key => (
-      <BreedList
-        item={key}
-        subBreed={this.state.breed[key]}
-        exists={this.state.breed[key].length}
-      />
-    ));
+    const { breed } = this.state;
+
+    const lists = breed ? (
+      Object.keys(this.state.breed).map((key, i) => (
+        <BreedList
+          getBreedImages={this.getBreedImages}
+          key={i}
+          breed={key}
+          subBreed={this.state.breed[key]}
+          exists={this.state.breed[key].length}
+        />
+      ))
+    ) : (
+      <></>
+    );
     return (
       <div>
         <div style={divStyle}>
@@ -103,8 +144,12 @@ export default class App extends React.Component {
             Next
           </Button>
         </div>
-        <div style={{ float: "left", display: "block", marginLeft: "6%" }}>
-          {lists}
+        <div style={breedListStyle}>{lists}</div>
+        <div style={breedListPics}>
+          <BreedImages
+            breedName={this.state.breedName}
+            subBreedName={this.state.subBreedName}
+          />
         </div>
       </div>
     );
