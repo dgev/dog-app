@@ -28,9 +28,9 @@ export default class Image extends Component {
         jsons.push(responses[i].json());
       }
       Promise.all(jsons).then(results => {
-        this.setState(prev => ({
+        this.setState({
           images: results.map(r => r.message)
-        }));
+        });
       });
     });
   };

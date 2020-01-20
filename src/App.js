@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "./Image";
+import BreedList from "./BreedList";
 import { Button } from "@material-ui/core";
 
 const divStyle = {
@@ -27,7 +28,7 @@ export default class App extends React.Component {
     this.state = {
       currentSrc: 0,
       length: 3,
-      draw: true
+      breed: []
     };
   }
 
@@ -46,8 +47,24 @@ export default class App extends React.Component {
     }));
   };
 
+  getBreed = async () => {
+    try {
+      await fetch("https://dog.ceo/api/breeds/list/all")
+        .then(resp => resp.json())
+        .then(results =>
+          this.setState({
+            breed: results.message
+          })
+        );
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+
   componentDidMount = () => {
     this.play();
+    this.getBreed();
+    // console.log(this.state.breed);
   };
 
   play = () => {
@@ -55,28 +72,40 @@ export default class App extends React.Component {
   };
 
   render() {
+    const lists = Object.keys(this.state.breed).map(key => (
+      <BreedList
+        item={key}
+        subBreed={this.state.breed[key]}
+        exists={this.state.breed[key].length}
+      />
+    ));
     return (
-      <div style={divStyle}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={this.previous}
-          style={buttonStyle}
-          margin=""
-        >
-          Previous
-        </Button>
-        <div style={imageStyle}>
-          <Image currentSrc={this.state.currentSrc} />
+      <div>
+        <div style={divStyle}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.previous}
+            style={buttonStyle}
+            margin=""
+          >
+            Previous
+          </Button>
+          <div style={imageStyle}>
+            <Image currentSrc={this.state.currentSrc} />
+          </div>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.next}
+            style={buttonStyle}
+          >
+            Next
+          </Button>
         </div>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={this.next}
-          style={buttonStyle}
-        >
-          Next
-        </Button>
+        <div style={{ float: "left", display: "block", marginLeft: "6%" }}>
+          {lists}
+        </div>
       </div>
     );
   }
