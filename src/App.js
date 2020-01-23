@@ -26,13 +26,15 @@ const breedListStyle = {
   width: "200px",
   float: "left",
   display: "block",
-  marginLeft: "6%"
+  marginLeft: "6%",
+  backgroundColor: "rgb(240, 236, 236)"
 };
 const breedListPics = {
-  flex: 1,
-  display: "block",
-  float: "left",
-  backgroundColor: "blue"
+  width: "50%",
+  padding: "5px",
+  height: "300px",
+  display: "flex",
+  float: "left"
 };
 
 export default class App extends React.Component {
@@ -49,17 +51,10 @@ export default class App extends React.Component {
 
   getBreedImages = (breed, subBreed) => {
     console.log(breed + " " + subBreed);
-
-    if (subBreed !== null) {
-      this.setState({
-        breedName: breed,
-        subBreedName: subBreed
-      });
-    } else {
-      this.setState({
-        breedName: breed
-      });
-    }
+    this.setState({
+      breedName: breed,
+      subBreedName: subBreed
+    });
   };
 
   next = () => {
@@ -93,7 +88,6 @@ export default class App extends React.Component {
   componentDidMount = () => {
     this.play();
     this.getBreed();
-    // console.log(this.state.breed);
   };
 
   componentWillUnmount = () => {
@@ -106,7 +100,6 @@ export default class App extends React.Component {
 
   render() {
     const { breed } = this.state;
-
     const lists = breed ? (
       Object.keys(this.state.breed).map((key, i) => (
         <BreedList

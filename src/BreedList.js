@@ -29,11 +29,7 @@ export default class BreedList extends React.Component {
   render() {
     return (
       <List>
-        <ListItem
-          button
-          onClick={this.handleClick}
-          // onClick={() => this.getImages(this.props.breed, false)}
-        >
+        <ListItem button>
           <Fab color="primary" aria-label="add">
             <AddIcon
               onClick={() => this.getBreedImages(this.props.breed, null)}
@@ -44,15 +40,9 @@ export default class BreedList extends React.Component {
             style={{ marginLeft: "10px" }}
           />
           {this.props.exists ? (
-            !this.state.open ? (
-              <Icon>
-                <ExpandMoreIcon />
-              </Icon>
-            ) : (
-              <Icon>
-                <ExpandLessIcon />
-              </Icon>
-            )
+            <Icon onClick={this.handleClick}>
+              {!this.state.open ? <ExpandMoreIcon /> : <ExpandLessIcon />}
+            </Icon>
           ) : null}
         </ListItem>
         <Collapse in={this.state.open} timeout="auto" unmountOnExit>

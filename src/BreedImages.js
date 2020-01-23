@@ -7,6 +7,7 @@ export default class BreedImages extends React.Component {
       images: []
     };
   }
+
   getImages = () => {
     let url = "https://dog.ceo/api/breed/";
     url += this.props.subBreedName
@@ -24,7 +25,6 @@ export default class BreedImages extends React.Component {
           images: arr
         });
       })
-
       .catch(e => {
         console.log(e.message);
       });
@@ -32,22 +32,21 @@ export default class BreedImages extends React.Component {
   };
 
   componentDidUpdate(prev) {
-    if (prev.breedName !== this.props.breedName) {
+    if (
+      prev.breedName !== this.props.breedName ||
+      prev.subBreedName !== this.props.subBreedName
+    ) {
       this.getImages();
     }
   }
 
   render() {
-    // const dogImagesforPrinting = this.state.images.map((elem, i) => (
-    //   <img src={this.state.images[i]} key={i} />
-    // ));
-
-    return (
-      <>
-        {this.state.images.map((elem, i) => (
-          <img src={elem} key={i} />
-        ))}
-      </>
+    const breedImages = !!this.state.images.length ? (
+      this.state.images.map((elem, i) => <img src={elem} key={i} />)
+    ) : (
+      <h1>No Images Found :(</h1>
     );
+
+    return <>{breedImages}</>;
   }
 }
